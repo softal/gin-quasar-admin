@@ -8,34 +8,34 @@ import (
 	"go.uber.org/zap"
 )
 
-type ApiNoteTodo struct{}
+type ApiTodo struct{}
 
-func (a *ApiNoteTodo) GetNoteTodoList(c *gin.Context) {
-	var requestNoteTodoList model.RequestGetNoteTodoList
-	if err := model.RequestShouldBindJSON(c, &requestNoteTodoList); err != nil {
+func (a *ApiTodo) GetTodoList(c *gin.Context) {
+	var toGetDataList model.RequestGetTodoList
+	if err := model.RequestShouldBindJSON(c, &toGetDataList); err != nil {
 		return
 	}
 	username := utils.GetUsername(c)
-	if err, deptList, total := servicePrivate.ServiceNoteTodo.GetNoteTodoList(requestNoteTodoList, username); err != nil {
+	if err, dataList, total := servicePrivate.ServiceTodo.GetTodoList(toGetDataList, username); err != nil {
 		global.GqaLogger.Error(utils.GqaI18n("GetListFailed"), zap.Any("err", err))
 		model.ResponseErrorMessage(utils.GqaI18n("GetListFailed")+err.Error(), c)
 	} else {
 		model.ResponseSuccessData(model.ResponsePage{
-			Records:  deptList,
-			Page:     requestNoteTodoList.Page,
-			PageSize: requestNoteTodoList.PageSize,
+			Records:  dataList,
+			Page:     toGetDataList.Page,
+			PageSize: toGetDataList.PageSize,
 			Total:    total,
 		}, c)
 	}
 }
 
-func (a *ApiNoteTodo) EditNoteTodo(c *gin.Context) {
-	var toEditNoteTodo model.SysNoteTodo
-	if err := model.RequestShouldBindJSON(c, &toEditNoteTodo); err != nil {
+func (a *ApiTodo) EditTodo(c *gin.Context) {
+	var toEditData model.SysTodo
+	if err := model.RequestShouldBindJSON(c, &toEditData); err != nil {
 		return
 	}
-	toEditNoteTodo.UpdatedBy = utils.GetUsername(c)
-	if err := servicePrivate.ServiceNoteTodo.EditNoteTodo(toEditNoteTodo); err != nil {
+	toEditData.UpdatedBy = utils.GetUsername(c)
+	if err := servicePrivate.ServiceTodo.EditTodo(toEditData); err != nil {
 		global.GqaLogger.Error(utils.GqaI18n("EditFailed"), zap.Any("err", err))
 		model.ResponseErrorMessage(utils.GqaI18n("EditFailed")+err.Error(), c)
 	} else {
@@ -44,9 +44,9 @@ func (a *ApiNoteTodo) EditNoteTodo(c *gin.Context) {
 	}
 }
 
-func (a *ApiNoteTodo) AddNoteTodo(c *gin.Context) {
-	var toAddNoteTodo model.RequestAddNoteTodo
-	if err := model.RequestShouldBindJSON(c, &toAddNoteTodo); err != nil {
+func (a *ApiTodo) AddTodo(c *gin.Context) {
+	var toAddData model.RequestAddTodo
+	if err := model.RequestShouldBindJSON(c, &toAddData); err != nil {
 		return
 	}
 	var GqaModelWithCreatedByAndUpdatedBy = model.GqaModelWithCreatedByAndUpdatedBy{
@@ -54,11 +54,11 @@ func (a *ApiNoteTodo) AddNoteTodo(c *gin.Context) {
 			CreatedBy: utils.GetUsername(c),
 		},
 	}
-	addNoteTodo := &model.SysNoteTodo{
+	addData := &model.SysTodo{
 		GqaModelWithCreatedByAndUpdatedBy: GqaModelWithCreatedByAndUpdatedBy,
-		TodoDetail:                        toAddNoteTodo.TodoDetail,
+		TodoDetail:                        toAddData.TodoDetail,
 	}
-	if err := servicePrivate.ServiceNoteTodo.AddNoteTodo(*addNoteTodo); err != nil {
+	if err := servicePrivate.ServiceTodo.AddTodo(*addData); err != nil {
 		global.GqaLogger.Error(utils.GqaI18n("AddFailed"), zap.Any("err", err))
 		model.ResponseErrorMessage(utils.GqaI18n("AddFailed")+err.Error(), c)
 	} else {
@@ -66,12 +66,12 @@ func (a *ApiNoteTodo) AddNoteTodo(c *gin.Context) {
 	}
 }
 
-func (a *ApiNoteTodo) DeleteNoteTodoById(c *gin.Context) {
+func (a *ApiTodo) DeleteTodoById(c *gin.Context) {
 	var toDeleteId model.RequestQueryById
 	if err := model.RequestShouldBindJSON(c, &toDeleteId); err != nil {
 		return
 	}
-	if err := servicePrivate.ServiceNoteTodo.DeleteNoteTodoById(toDeleteId.Id); err != nil {
+	if err := servicePrivate.ServiceTodo.DeleteTodoById(toDeleteId.Id); err != nil {
 		global.GqaLogger.Error(utils.GqaI18n("DeleteFailed"), zap.Any("err", err))
 		model.ResponseErrorMessage(utils.GqaI18n("DeleteFailed")+err.Error(), c)
 	} else {
@@ -80,15 +80,15 @@ func (a *ApiNoteTodo) DeleteNoteTodoById(c *gin.Context) {
 	}
 }
 
-func (a *ApiNoteTodo) QueryNoteTodoById(c *gin.Context) {
+func (a *ApiTodo) QueryTodoById(c *gin.Context) {
 	var toQueryId model.RequestQueryById
 	if err := model.RequestShouldBindJSON(c, &toQueryId); err != nil {
 		return
 	}
-	if err, dept := servicePrivate.ServiceNoteTodo.QueryNoteTodoById(toQueryId.Id); err != nil {
+	if err, data := servicePrivate.ServiceTodo.QueryTodoById(toQueryId.Id); err != nil {
 		global.GqaLogger.Error(utils.GqaI18n("FindFailed"), zap.Any("err", err))
 		model.ResponseErrorMessage(utils.GqaI18n("FindFailed")+err.Error(), c)
 	} else {
-		model.ResponseSuccessMessageData(gin.H{"records": dept}, utils.GqaI18n("FindSuccess"), c)
+		model.ResponseSuccessMessageData(gin.H{"records": data}, utils.GqaI18n("FindSuccess"), c)
 	}
 }

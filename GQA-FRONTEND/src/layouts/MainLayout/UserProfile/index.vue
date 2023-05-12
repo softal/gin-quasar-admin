@@ -11,7 +11,7 @@
             <q-card-section style="max-width: 95vw; height: 85vh;">
                 <div class="row items-center" style="height: 100%">
                     <div class="col-4 column items-center justify-center">
-                        <GqaAvatar loginUser size="200px" />
+                        <gqa-avatar loginUser size="200px" />
 
                         <div class="text-subtitle1 q-mt-md q-mb-md">
                             <GqaShowName showMyName />
@@ -36,11 +36,10 @@
 </template>
 
 <script setup>
-import GqaShowName from 'src/components/GqaShowName'
-import GqaAvatar from 'src/components/GqaAvatar'
-import NoticeTab from './modules/NoticeTab'
-import ChangePasswordDialog from './modules/ChangePasswordDialog'
-import ChangeNicknameDialog from './modules/ChangeNicknameDialog'
+import GqaShowName from 'src/components/GqaShowName/index.vue'
+import NoticeTab from './modules/NoticeTab.vue'
+import ChangePasswordDialog from './modules/ChangePasswordDialog.vue'
+import ChangeNicknameDialog from './modules/ChangeNicknameDialog.vue'
 import { ref, nextTick } from 'vue'
 
 const showProfile = ref(false)

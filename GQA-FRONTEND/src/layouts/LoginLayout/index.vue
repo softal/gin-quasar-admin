@@ -6,7 +6,7 @@
             <div v-else :class="changeContainerImg === '' ? 'gqa-login-layout-img-container' : ''"
                 :style="changeContainerImg === '' ? { background: $q.dark.isActive ? 'black' : '#e3f4fa' } : changeContainerImg">
                 <div class="main-title-logo row justify-center items-center">
-                    <GqaAvatar class="gin-quasar-admin-logo" :src="gqaFrontend.logo" size="45px" />
+                    <gqa-avatar class="gin-quasar-admin-logo" :src="gqaFrontend.logo" size="45px" />
                     <span class="text-weight-bold text-h4" style="margin-left:8px">
                         {{ gqaFrontend.mainTitle }}
                     </span>
@@ -15,8 +15,7 @@
                 <figure class="positive-ball" />
                 <figure class="warning-ball" />
                 <figure class="negative-ball" />
-                <q-card bordered class="init-login-card shadow-15" style="border-radius: 20px;"
-                    :class="darkThemeLoginCard">
+                <q-card bordered class="init-login-card shadow-15" style="border-radius: 20px;" :class="darkThemeLoginCard">
                     <InitDbView @initDbSuccess="checkDb" v-if="dbNeedInit" />
                     <SimpleView v-else />
                 </q-card>
@@ -28,7 +27,7 @@
                 <div class="version-git-show">
                     <q-btn flat>
                         {{ $t('Version') }}{{ $t('Info') }}
-                        <GqaVersion />
+                        <gqa-version-menu />
                     </q-btn>
                     <q-btn flat label="Github" @click="openLink('https://github.com/Junvary/gin-quasar-admin')" />
                     <q-btn flat label="Gitee" @click="openLink('https://gitee.com/junvary/gin-quasar-admin')" />
@@ -37,7 +36,7 @@
                     <GqaLanguage style="width: 100%;" />
                 </div>
                 <div class="dark-theme-show">
-                    <q-btn :icon="playFlag? 'music_off' : 'music_note'" round flat @click="playBgm"></q-btn>
+                    <q-btn :icon="playFlag ? 'music_off' : 'music_note'" round flat @click="playBgm"></q-btn>
                     <DarkTheme />
                 </div>
             </div>
@@ -56,17 +55,13 @@ import { postAction } from 'src/api/manage'
 import { useStorageStore } from 'src/stores/storage'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import useDocument from 'src/composables/useDocument'
-import GqaVersion from 'src/components/GqaVersion/index.vue'
 import GqaLanguage from 'src/components/GqaLanguage/index.vue'
-import GqaAvatar from 'src/components/GqaAvatar/index.vue'
 import config from '../../../package.json'
 import DarkTheme from 'src/components/GqaTheme/DarkTheme.vue';
 import useTheme from 'src/composables/useTheme';
 
 const { darkThemeLoginCard } = useTheme()
 const gqaVersion = config.version
-useDocument()
 const $q = useQuasar()
 const { t } = useI18n()
 const { gqaFrontend } = useCommon()
@@ -91,6 +86,13 @@ onBeforeMount(() => {
     GqaConsoleLogo()
 })
 
+const getResultKey = (fileKey, pluginCode) => {
+    const resultKey = fileKey.filter(key => {
+        return key.split('/')[2] === pluginCode
+    })
+    return resultKey
+}
+
 const checkDb = async () => {
     const res = await postAction('public/check-db')
     if (res.code === 1) {
@@ -106,7 +108,9 @@ const checkDb = async () => {
             if (pluginCurrent.value) {
                 try {
                     const pluginCode = pluginCurrent.value.slice(7)
-                    pluginComponent.value = markRaw(defineAsyncComponent(() => import(`src/plugins/${pluginCode}/LoginLayout/index.vue`)))
+                    const pluginCodeComponent = getResultKey(Object.keys(pluginsFile), pluginCode)
+                    pluginComponent.value = markRaw(defineAsyncComponent(() => pluginsFile[pluginCodeComponent[0]]))
+                    // pluginComponent.value = markRaw(defineAsyncComponent(() => import(`src/plugins/${pluginCode}/LoginLayout/index.vue`)))
                 } catch (error) {
                     $q.notify({
                         type: 'negative',
@@ -154,14 +158,14 @@ const bannerImage = computed(() => {
 
 const loginBgm = ref(null)
 const playFlag = ref(false)
-const playBgm = ()=>{
-    if(playFlag.value){
+const playBgm = () => {
+    if (playFlag.value) {
         loginBgm.value.pause()
         playFlag.value = false
-    }else{
+    } else {
         loginBgm.value.play()
         playFlag.value = true
     }
-    
+
 }
 </script>

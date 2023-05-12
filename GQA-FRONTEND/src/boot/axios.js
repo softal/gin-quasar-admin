@@ -13,7 +13,7 @@ import { useUserStore } from 'src/stores/user'
 
 const api = axios.create({
     baseURL: process.env.API,
-    timeout: 40000,
+    timeout: 120000,
     withCredentials: false
 })
 
@@ -44,14 +44,14 @@ const forbiddenUrl = [
     'log/delete-log-login-by-id',
     'log/delete-log-operation-by-id',
     'notice/delete-notice-by-id',
-    'note-todo/edit-note-todo',
-    'note-todo/delete-note-todo-by-id',
+    'todo/edit-todo',
+    'todo/delete-todo-by-id',
     'user-online/kick-online-user',
     'cron/start-cron',
     'cron/stop-cron'
 ]
 
-export default boot(({ app, router, store }) => {
+export default boot(({ app, router }) => {
     const userStore = useUserStore()
 
     api.interceptors.request.use(request => {

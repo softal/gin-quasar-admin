@@ -10,7 +10,8 @@ import { markRaw, onMounted, ref, watch } from 'vue';
 import useTheme from 'src/composables/useTheme'
 
 const { darkThemeChart } = useTheme()
-const echarts = require('echarts')
+// const echarts = require('echarts')
+import * as echarts from "echarts";
 const chart = ref(null)
 const piechart = ref(null)
 
@@ -60,8 +61,6 @@ const options = ref({
                 { value: 30, name: 'rose 4' },
                 { value: 28, name: 'rose 5' },
                 { value: 26, name: 'rose 6' },
-                { value: 22, name: 'rose 7' },
-                { value: 18, name: 'rose 8' }
             ]
         }
     ]

@@ -3,7 +3,7 @@
         <q-table row-key="id" separator="cell" :rows="tableData" :columns="columns" v-model:pagination="pagination"
             :rows-per-page-options="pageOptions" :loading="loading" @request="onRequest" style="max-height: 70vh;">
             <template v-slot:top>
-                <q-btn color="primary" @click="showAddForm()" :label="$t('Add') + ' ' + $t('NoteTodo')" />
+                <q-btn color="primary" @click="showAddForm()" :label="$t('Add') + ' ' + $t('Todo')" />
             </template>
             <template v-slot:body-cell-todo_detail="props">
                 <q-td :props="props" class="ellipsis" style="max-width: 400px;">
@@ -16,6 +16,12 @@
                 </q-td>
             </template>
 
+            <template v-slot:body-cell-created_at="props">
+                <q-td :props="props">
+                    {{ showDateTime(props.row.created_at) }}
+                </q-td>
+            </template>
+
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <div class="q-gutter-xs">
@@ -25,7 +31,7 @@
                 </q-td>
             </template>
         </q-table>
-        <NoticeNoteTodoDetail ref="recordDetailDialog" @handleFinish="handleFinish" />
+        <NoticeTodoDetail ref="recordDetailDialog" @handleFinish="handleFinish" />
     </div>
 </template>
 
@@ -33,17 +39,18 @@
 import useTableData from 'src/composables/useTableData'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import NoticeNoteTodoDetail from './NoticeNoteTodoDetail'
+import NoticeTodoDetail from './NoticeTodoDetail.vue'
 
 const { t } = useI18n()
 const url = {
-    list: 'note-todo/get-note-todo-list',
+    list: 'todo/get-todo-list',
 }
 const columns = computed(() => {
     return [
         { name: 'id', align: 'center', label: 'ID', field: 'id' },
         { name: 'todo_detail', align: 'center', label: t('Detail'), field: 'todo_detail' },
         { name: 'todo_status', align: 'center', label: t('Done'), field: 'todo_status' },
+        { name: 'created_at', align: 'center', label: t('CreatedAt'), field: 'created_at' },
         { name: 'actions', align: 'center', label: t('Actions'), field: 'actions' },
     ]
 })
@@ -60,6 +67,7 @@ const {
     getTableData,
     handleFinish,
     handleDelete,
+    showDateTime,
 } = useTableData(url)
 
 onMounted(() => {
